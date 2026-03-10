@@ -12,15 +12,16 @@
             --bg-color: #d95550;
             --button-color: #d95550;
             --text-color: #ffffff;
-            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.15);
             --glass-border: rgba(255, 255, 255, 0.2);
+            --progress-bg: rgba(255, 255, 255, 0.2);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
             transition: background-color 0.5s ease, color 0.5s ease;
         }
 
@@ -31,63 +32,121 @@
             align-items: center;
             min-height: 100vh;
             color: var(--text-color);
+            overflow: hidden; /* 防止移动端滚动 */
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 480px;
+            padding: 20px;
         }
 
         .container {
             background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border);
-            padding: 40px;
-            border-radius: 24px;
-            width: 90%;
-            max-width: 480px;
+            padding: 30px;
+            border-radius: 30px;
+            width: 100%;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            position: relative;
         }
 
         .tabs {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin-bottom: 30px;
+            gap: 8px;
+            margin-bottom: 25px;
+            background: rgba(0,0,0,0.1);
+            padding: 5px;
+            border-radius: 50px;
+            display: inline-flex;
         }
 
         .tab-btn {
             background: transparent;
             border: none;
             color: rgba(255, 255, 255, 0.7);
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 8px 18px;
+            border-radius: 40px;
             transition: all 0.3s ease;
         }
 
         .tab-btn:hover {
-            background: rgba(0, 0, 0, 0.1);
             color: #fff;
         }
 
         .tab-btn.active {
-            background: rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 0.2);
             color: #fff;
             font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* 环形进度条容器 */
+        .timer-wrapper {
+            position: relative;
+            width: 260px;
+            height: 260px;
+            margin: 0 auto 30px;
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            stroke-linecap: round;
         }
 
         .timer-display {
-            font-size: 100px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 72px;
             font-weight: bold;
-            margin: 20px 0;
-            line-height: 1;
-            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            letter-spacing: 2px;
             font-variant-numeric: tabular-nums;
+        }
+
+        .task-input {
+            width: 80%;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            color: #fff;
+            font-size: 18px;
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 20px;
+            outline: none;
+        }
+
+        .task-input::placeholder {
+            color: rgba(255,255,255,0.6);
+            font-style: italic;
+        }
+
+        .task-input:focus {
+            border-bottom-color: #fff;
         }
 
         .controls {
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
             gap: 20px;
         }
@@ -96,35 +155,198 @@
             background-color: #fff;
             color: var(--button-color);
             border: none;
-            font-size: 24px;
-            font-weight: bold;
-            padding: 16px 48px;
-            border-radius: 50px;
+            font-size: 22px;
+            font-weight: 800;
+            padding: 0;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
             cursor: pointer;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 6px 0 rgb(235, 235, 235);
+            box-shadow: 0 6px 0 rgb(235, 235, 235), 0 10px 20px rgba(0,0,0,0.1);
             transition: all 0.1s ease;
-            width: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .main-btn svg {
+            width: 32px;
+            height: 32px;
+            fill: currentColor;
+            margin-left: 4px; /* Play icon visual correction */
+        }
+        
+        .main-btn.paused svg {
+             margin-left: 0;
         }
 
         .main-btn:active {
             transform: translateY(6px);
-            box-shadow: none;
+            box-shadow: 0 0 0 rgb(235, 235, 235);
         }
 
-        .reset-btn {
-            background: transparent;
+        .icon-btn {
+            background: rgba(255,255,255,0.2);
             border: none;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
+            color: #fff;
+            width: 50px;
+            height: 50px;
+            border-radius: 16px;
             cursor: pointer;
-            text-decoration: underline;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+        
+        .icon-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        /* Settings Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 100;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal {
+            background: #fff;
+            color: #333;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.open .modal {
+            transform: translateY(0);
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .setting-item {
+            margin-bottom: 15px;
+        }
+
+        .setting-item label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #888;
+            font-size: 14px;
+        }
+
+        .setting-item input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-top: 10px;
         }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+        
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #4c9195;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
 
-        .reset-btn:hover {
+        .save-btn {
+            background: #333;
             color: #fff;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+            cursor: pointer;
         }
 
         /* 模式特定样式 */
@@ -133,175 +355,360 @@
         body.mode-long { --bg-color: #457ca3; --button-color: #457ca3; }
 
         @media (max-width: 480px) {
-            .timer-display {
-                font-size: 80px;
-            }
-            .container {
-                padding: 20px;
-            }
+            .timer-wrapper { width: 220px; height: 220px; }
+            .timer-display { font-size: 60px; }
+            .container { padding: 20px; }
         }
     </style>
 </head>
 <body class="mode-pomodoro">
-    <div class="container">
-        <div class="tabs">
-            <button class="tab-btn active" onclick="setMode('pomodoro')">专注</button>
-            <button class="tab-btn" onclick="setMode('short')">短休息</button>
-            <button class="tab-btn" onclick="setMode('long')">长休息</button>
+    <div class="app-container">
+        <div class="container">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="app.setMode('pomodoro')">专注</button>
+                <button class="tab-btn" onclick="app.setMode('short')">短休息</button>
+                <button class="tab-btn" onclick="app.setMode('long')">长休息</button>
+            </div>
+
+            <div class="timer-wrapper">
+                <svg class="progress-ring" width="100%" height="100%">
+                    <circle 
+                        class="progress-ring__bg"
+                        stroke="rgba(255,255,255,0.2)"
+                        stroke-width="8"
+                        fill="transparent"
+                        cx="50%" cy="50%" r="48%"
+                    />
+                    <circle 
+                        class="progress-ring__circle"
+                        stroke="white"
+                        stroke-width="8"
+                        fill="transparent"
+                        cx="50%" cy="50%" r="48%"
+                    />
+                </svg>
+                <div class="timer-display" id="timer">25:00</div>
+            </div>
+
+            <input type="text" class="task-input" placeholder="当下在专注什么？" id="taskInput">
+
+            <div class="controls">
+                <button class="icon-btn" onclick="app.openSettings()" title="设置">
+                    <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+                </button>
+                
+                <button class="main-btn" id="startBtn" onclick="app.toggleTimer()">
+                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+
+                <button class="icon-btn" onclick="app.resetTimer()" title="重置">
+                    <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+                </button>
+            </div>
         </div>
+    </div>
 
-        <div class="timer-display" id="timer">25:00</div>
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <h2>设置 <button class="close-modal" onclick="app.closeSettings()">&times;</button></h2>
+            
+            <div class="setting-item">
+                <label>专注时长 (分钟)</label>
+                <input type="number" id="pomodoroTime" value="25" min="1" max="60">
+            </div>
+            
+            <div class="setting-item">
+                <label>短休息时长 (分钟)</label>
+                <input type="number" id="shortTime" value="5" min="1" max="30">
+            </div>
+            
+            <div class="setting-item">
+                <label>长休息时长 (分钟)</label>
+                <input type="number" id="longTime" value="15" min="1" max="60">
+            </div>
 
-        <div class="controls">
-            <button class="main-btn" id="startBtn" onclick="toggleTimer()">开始</button>
-            <button class="reset-btn" onclick="resetTimer()">重置</button>
+            <div class="setting-row">
+                <label style="margin:0; font-weight:600; color:#888;">桌面通知</label>
+                <label class="switch">
+                    <input type="checkbox" id="notificationToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <button class="save-btn" onclick="app.saveSettings()">保存</button>
         </div>
     </div>
 
     <script>
-        // 配置
-        const modes = {
-            pomodoro: { time: 25 * 60, color: '#d95550' },
-            short: { time: 5 * 60, color: '#4c9195' },
-            long: { time: 15 * 60, color: '#457ca3' }
-        };
-
-        // 状态变量
-        let currentMode = 'pomodoro';
-        let timeLeft = modes.pomodoro.time;
-        let timerId = null;
-        let isRunning = false;
-
-        // DOM 元素
-        const timerDisplay = document.getElementById('timer');
-        const startBtn = document.getElementById('startBtn');
-        const body = document.body;
-        const tabBtns = document.querySelectorAll('.tab-btn');
-
-        // 音效 (简单的 beep 声)
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playSound() {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
+        class PomodoroApp {
+            constructor() {
+                // 默认配置
+                this.defaultConfig = {
+                    pomodoro: 25,
+                    short: 5,
+                    long: 15,
+                    notifications: false
+                };
+                
+                // 加载用户配置
+                this.config = JSON.parse(localStorage.getItem('pomodoroConfig')) || {...this.defaultConfig};
+                
+                // 状态
+                this.modes = {
+                    pomodoro: { time: this.config.pomodoro * 60, color: '#d95550', label: '专注' },
+                    short: { time: this.config.short * 60, color: '#4c9195', label: '短休息' },
+                    long: { time: this.config.long * 60, color: '#457ca3', label: '长休息' }
+                };
+                
+                this.currentMode = 'pomodoro';
+                this.timeLeft = this.modes.pomodoro.time;
+                this.totalTime = this.modes.pomodoro.time;
+                this.timerId = null;
+                this.isRunning = false;
+                
+                // 音频
+                this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // 初始化
+                this.initDOM();
+                this.initCircle();
+                this.updateDisplay();
+                this.requestNotificationPermission();
+                
+                // 绑定ESC关闭弹窗
+                window.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') this.closeSettings();
+                    if (e.code === 'Space') {
+                        // 避免在输入框时触发
+                        if (document.activeElement.tagName !== 'INPUT') {
+                            e.preventDefault();
+                            this.toggleTimer();
+                        }
+                    }
+                });
             }
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
 
-            oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5
-            oscillator.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.5); // A4
-            
-            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.5);
-        }
-
-        // 更新显示
-        function updateDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            
-            timerDisplay.textContent = timeString;
-            document.title = `${timeString} - 专注时钟`;
-        }
-
-        // 切换模式
-        function setMode(mode) {
-            if (isRunning && !confirm('计时器正在运行，确定要切换吗？')) {
-                return;
+            initDOM() {
+                this.dom = {
+                    timer: document.getElementById('timer'),
+                    startBtn: document.getElementById('startBtn'),
+                    body: document.body,
+                    tabBtns: document.querySelectorAll('.tab-btn'),
+                    circle: document.querySelector('.progress-ring__circle'),
+                    modal: document.getElementById('settingsModal'),
+                    inputs: {
+                        pomodoro: document.getElementById('pomodoroTime'),
+                        short: document.getElementById('shortTime'),
+                        long: document.getElementById('longTime'),
+                        notification: document.getElementById('notificationToggle')
+                    }
+                };
             }
-            
-            stopTimer();
-            currentMode = mode;
-            timeLeft = modes[mode].time;
-            
-            // 更新 UI
-            body.className = `mode-${mode}`;
-            tabBtns.forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.textContent === (mode === 'pomodoro' ? '专注' : mode === 'short' ? '短休息' : '长休息')) {
-                    btn.classList.add('active');
+
+            initCircle() {
+                const radius = this.dom.circle.r.baseVal.value;
+                // 此处 r="48%" 是相对SVG大小，需要计算实际像素周长
+                // 或者我们可以简单点，通过 CSS 设置 stroke-dasharray 为 100% 相对值不好搞，
+                // 还是用 JS 计算吧。GetBoundingClientRect? 
+                // SVG circle r is percentage, simpler approach:
+                // Let's assume pathLength="100" on circle element would be easiest but Safari support varies.
+                // Let's get computed radius.
+                // For simplicity/robustness, I'll calculate circumference based on the SVG viewBox logic or just fixed logic.
+                // But wait, r="48%" depends on container size.
+                // Let's use getBBox() or just set pathLength attribute if possible.
+                // Better yet: set style stroke-dasharray to circumference.
+                
+                // Actually, getting the radius in pixels:
+                // Since container is responsive, this is tricky.
+                // TRICK: pathLength attribute on circle makes stroke-dasharray work in user units (0-100).
+                this.dom.circle.setAttribute('pathLength', '100');
+                this.dom.circle.style.strokeDasharray = '100';
+                this.dom.circle.style.strokeDashoffset = '0';
+            }
+
+            updateCircle() {
+                const percent = (1 - this.timeLeft / this.totalTime) * 100;
+                // offset 100 means empty, 0 means full.
+                // We want it to shrink: start at 0 (full) -> 100 (empty).
+                // Or grow? Usually timers shrink.
+                // Let's make it shrink. 
+                // Full = 0 offset (if dasharray is 100). 
+                // Empty = 100 offset.
+                // So offset = percent.
+                this.dom.circle.style.strokeDashoffset = percent;
+            }
+
+            requestNotificationPermission() {
+                if ('Notification' in window && this.config.notifications) {
+                    Notification.requestPermission();
                 }
-            });
-
-            updateDisplay();
-        }
-
-        // 开始/暂停
-        function toggleTimer() {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
             }
-            
-            if (isRunning) {
-                stopTimer();
-            } else {
-                startTimer();
-            }
-        }
 
-        function startTimer() {
-            if (timeLeft === 0) return;
-            
-            isRunning = true;
-            startBtn.textContent = '暂停';
-            startBtn.style.transform = 'translateY(6px)';
-            startBtn.style.boxShadow = 'none'; // 保持按下状态的视觉效果
-            
-            // 恢复一下按钮状态，让它看起来是按下后弹起还是保持按下？
-            // 通常暂停按钮是平的或者看起来不一样。为了简单，我们只改文字。
-            // 撤销上面的样式修改，使用CSS类更合适，但这里直接用JS控制
-            startBtn.style.transform = '';
-            startBtn.style.boxShadow = '';
-
-            timerId = setInterval(() => {
-                timeLeft--;
-                updateDisplay();
-
-                if (timeLeft <= 0) {
-                    clearInterval(timerId);
-                    timerId = null;
-                    isRunning = false;
-                    startBtn.textContent = '开始';
-                    playSound();
-                    alert('时间到！');
+            playSound() {
+                if (this.audioCtx.state === 'suspended') {
+                    this.audioCtx.resume();
                 }
-            }, 1000);
-        }
+                const oscillator = this.audioCtx.createOscillator();
+                const gainNode = this.audioCtx.createGain();
 
-        function stopTimer() {
-            clearInterval(timerId);
-            timerId = null;
-            isRunning = false;
-            startBtn.textContent = '开始';
-        }
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(880, this.audioCtx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(440, this.audioCtx.currentTime + 0.5);
+                
+                gainNode.gain.setValueAtTime(0.1, this.audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.5);
 
-        // 重置
-        function resetTimer() {
-            if (isRunning && !confirm('确定要重置计时器吗？')) {
-                return;
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioCtx.destination);
+
+                oscillator.start();
+                oscillator.stop(this.audioCtx.currentTime + 0.5);
             }
-            stopTimer();
-            timeLeft = modes[currentMode].time;
-            updateDisplay();
+
+            sendNotification() {
+                if (this.config.notifications && Notification.permission === "granted") {
+                    new Notification("专注时钟", {
+                        body: `${this.modes[this.currentMode].label}时间到了！`,
+                        icon: "favicon.ico" // 如果有的话
+                    });
+                }
+            }
+
+            updateDisplay() {
+                const minutes = Math.floor(this.timeLeft / 60);
+                const seconds = this.timeLeft % 60;
+                const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                this.dom.timer.textContent = timeString;
+                document.title = `${timeString} - ${this.modes[this.currentMode].label}`;
+                this.updateCircle();
+            }
+
+            setMode(mode) {
+                if (this.isRunning && !confirm('计时器正在运行，确定要切换吗？')) {
+                    return;
+                }
+                
+                this.stopTimer();
+                this.currentMode = mode;
+                this.totalTime = this.modes[mode].time;
+                this.timeLeft = this.totalTime;
+                
+                this.dom.body.className = `mode-${mode}`;
+                this.dom.tabBtns.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.textContent === this.modes[mode].label) {
+                        btn.classList.add('active');
+                    }
+                });
+
+                this.updateDisplay();
+            }
+
+            toggleTimer() {
+                if (this.audioCtx.state === 'suspended') {
+                    this.audioCtx.resume();
+                }
+                
+                if (this.isRunning) {
+                    this.stopTimer();
+                } else {
+                    this.startTimer();
+                }
+            }
+
+            startTimer() {
+                if (this.timeLeft === 0) return;
+                
+                this.isRunning = true;
+                // Update button icon to Pause
+                this.dom.startBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+                this.dom.startBtn.classList.add('paused');
+
+                this.timerId = setInterval(() => {
+                    this.timeLeft--;
+                    this.updateDisplay();
+
+                    if (this.timeLeft <= 0) {
+                        this.completeTimer();
+                    }
+                }, 1000);
+            }
+
+            stopTimer() {
+                clearInterval(this.timerId);
+                this.timerId = null;
+                this.isRunning = false;
+                // Update button icon to Play
+                this.dom.startBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+                this.dom.startBtn.classList.remove('paused');
+            }
+
+            completeTimer() {
+                this.stopTimer();
+                this.playSound();
+                this.sendNotification();
+                alert(`${this.modes[this.currentMode].label}时间结束！`);
+                // Auto reset? or stay at 0? 
+                // Usually reset to start of next session or same session.
+                // Let's reset to same session for simplicity
+                this.resetTimer(false); 
+            }
+
+            resetTimer(confirmReset = true) {
+                if (confirmReset && this.isRunning && !confirm('确定要重置计时器吗？')) {
+                    return;
+                }
+                this.stopTimer();
+                this.timeLeft = this.modes[this.currentMode].time;
+                this.updateDisplay();
+            }
+
+            // Settings Logic
+            openSettings() {
+                this.dom.inputs.pomodoro.value = this.config.pomodoro;
+                this.dom.inputs.short.value = this.config.short;
+                this.dom.inputs.long.value = this.config.long;
+                this.dom.inputs.notification.checked = this.config.notifications;
+                
+                this.dom.modal.classList.add('open');
+            }
+
+            closeSettings() {
+                this.dom.modal.classList.remove('open');
+            }
+
+            saveSettings() {
+                const newConfig = {
+                    pomodoro: parseInt(this.dom.inputs.pomodoro.value) || 25,
+                    short: parseInt(this.dom.inputs.short.value) || 5,
+                    long: parseInt(this.dom.inputs.long.value) || 15,
+                    notifications: this.dom.inputs.notification.checked
+                };
+                
+                this.config = newConfig;
+                localStorage.setItem('pomodoroConfig', JSON.stringify(newConfig));
+                
+                // Update modes
+                this.modes.pomodoro.time = newConfig.pomodoro * 60;
+                this.modes.short.time = newConfig.short * 60;
+                this.modes.long.time = newConfig.long * 60;
+                
+                // If not running, update current timer immediately
+                if (!this.isRunning) {
+                    this.totalTime = this.modes[this.currentMode].time;
+                    this.timeLeft = this.totalTime;
+                    this.updateDisplay();
+                }
+                
+                this.requestNotificationPermission();
+                this.closeSettings();
+            }
         }
 
-        // 初始化
-        updateDisplay();
-        
-        // 键盘快捷键
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space') {
-                e.preventDefault(); // 防止滚动页面
-                toggleTimer();
-            }
-        });
+        // Initialize App
+        const app = new PomodoroApp();
     </script>
 </body>
 </html>
